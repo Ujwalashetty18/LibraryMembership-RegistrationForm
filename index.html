@@ -1,65 +1,72 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Registration Form</title>
-
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 </head>
 <body>
-  <main class="container">
-    <h1>Online Registration Form</h1>
+<main class="container">
+<h1>Library Membership Registration</h1>
+<p class="lead">Join the library to borrow books. Fill the form below and get your membership ID instantly.</p>
 
-    <form id="regForm" autocomplete="off">
-      <div class="row">
-        <label for="fullname">Full name</label>
-        <input id="fullname" name="fullname" type="text" required />
-      </div>
 
-      <div class="row">
-        <label for="email">Email</label>
-        <input id="email" name="email" type="email" required />
-      </div>
+<form id="memberForm" autocomplete="off">
+<div class="row">
+<label for="fullname">Full name</label>
+<input id="fullname" name="fullname" type="text" required />
+</div>
 
-      <div class="row">
-        <label for="phone">Phone</label>
-        <input id="phone" name="phone" type="tel" pattern="[0-9+ \-]{6,20}" required />
-      </div>
 
-      <div class="row">
-        <label for="gender">Gender</label>
-        <select id="gender" name="gender">
-          <option value="Not specified">Not specified</option>
-          <option>Male</option>
-          <option>Female</option>
-          <option>Other</option>
-        </select>
-      </div>
+<div class="row two-cols">
+<div>
+<label for="email">Email</label>
+<input id="email" name="email" type="email" required />
+</div>
+<div>
+<label for="phone">Phone</label>
+<input id="phone" name="phone" type="tel" pattern="[0-9+ \-]{6,20}" required />
+</div>
+</div>
 
-      <div class="row">
-        <label for="course">Course interested</label>
-        <input id="course" name="course" type="text" required />
-      </div>
 
-      <div class="row">
-        <label for="comments">Comments</label>
-        <textarea id="comments" name="comments" rows="4"></textarea>
-      </div>
+<div class="row">
+<label for="dob">Date of Birth</label>
+<input id="dob" name="dob" type="date" />
+</div>
 
-      <div class="actions">
-        <button type="submit" id="submitBtn">Submit</button>
-        <button type="reset">Reset</button>
-      </div>
-    </form>
 
-    <section id="resultArea" class="hidden">
-      <!-- Server will return formatted HTML here -->
-    </section>
-  </main>
+<div class="row">
+<label for="address">Address</label>
+<textarea id="address" name="address" rows="3"></textarea>
+</div>
 
-  <script src="script.js"></script>
+
+<div class="row two-cols">
+<div>
+<label for="membership_duration">Membership Duration</label>
+<select id="membership_duration" name="membership_duration">
+<option value="3">3 months</option>
+<option value="6">6 months</option>
+<option value="12" selected>12 months</option>
+</select>
+</div>
+<div>
+<label for="preferred_genres">Preferred genres (optional)</label>
+<input id="preferred_genres" name="preferred_genres" placeholder="e.g. Fiction, Science" />
+</div>
+</div>
+
+
+<input type="hidden" id="membership_id" name="membership_id" />
+
+
+<div class="actions">
+<button type="submit" id="submitBtn">Register</button>
+<button type="reset" id="resetBtn">Reset</button>
+</div>
+</form>
+
+
+<section id="resultArea" class="hidden" aria-live="polite"></section>
+</main>
+
+
+<script src="script.js"></script>
 </body>
 </html>
-
