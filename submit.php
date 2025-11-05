@@ -1,56 +1,54 @@
 <?php
-// submit.php
-header('Content-Type: text/html; charset=utf-8');
+$duration = (int)s('membership_duration');
+$genres = htmlspecialchars(s('preferred_genres'), ENT_QUOTES, 'UTF-8');
+$membership_id = htmlspecialchars(s('membership_id'), ENT_QUOTES, 'UTF-8');
 
-// helper to sanitize
-function s($k){
-    return isset($_POST[$k]) ? trim($_POST[$k]) : '';
-}
-$fullname = htmlspecialchars(s('fullname'), ENT_QUOTES, 'UTF-8');
-$email    = htmlspecialchars(s('email'), ENT_QUOTES, 'UTF-8');
-$phone    = htmlspecialchars(s('phone'), ENT_QUOTES, 'UTF-8');
-$gender   = htmlspecialchars(s('gender'), ENT_QUOTES, 'UTF-8');
-$course   = htmlspecialchars(s('course'), ENT_QUOTES, 'UTF-8');
-$comments = nl2br(htmlspecialchars(s('comments'), ENT_QUOTES, 'UTF-8'));
 
-// basic server-side validation
+// Basic validation
 if(strlen($fullname) < 2 || !filter_var($email, FILTER_VALIDATE_EMAIL)){
-    http_response_code(400);
-    echo "<div class='result-card'><strong>Error:</strong> Invalid submission.</div>";
-    exit;
+http_response_code(400);
+echo "<div class='result-card'><strong>Error:</strong> Invalid submission. Please check name and email.</div>";
+exit;
 }
 
-// Save to CSV (append)
-$csvFile = __DIR__ . '/registrations.csv';
+
+// compute expiry date based on duration (months)
+$start = new DateTime();
+$expiry = (clone $start)->modify("+{$duration} months");
+$startStr = $start->format('d M Y');
+$expiryStr = $expiry->format('d M Y');
+
+
+// save to CSV file
+$csvFile = __DIR__ . '/library_members.csv';
 $fp = fopen($csvFile, 'a');
 if($fp){
-    // Add BOM on first creation? (not necessary)
-    fputcsv($fp, [date('Y-m-d H:i:s'), $fullname, $email, $phone, $gender, $course, strip_tags($comments)]);
-    fclose($fp);
+// save raw values (without HTML) - store DOB and address as plain text
+fputcsv($fp, [date('Y-m-d H:i:s'), $membership_id, $fullname, $email, $phone, $dob, $address, $genres, $duration, $expiry->format('Y-m-d')]);
+fclose($fp);
 }
 
-// create a badge based on some rule (example: if course contains "Advanced" mark special)
-$badgeText = "Registered";
-$badgeClass = "badge";
-if (stripos($course, 'advanced') !== false) {
-    $badgeText = "Advanced interest";
-}
 
-$now = date('d M Y, H:i');
+// return a formatted card
 ?>
 <div class="result-card" role="status" aria-live="polite">
-  <div class="result-header">
-    <div>
-      <h2 style="margin:0;font-size:18px"><?= $fullname ?></h2>
-      <div style="font-size:13px;color:#666"><?= $now ?> • <?= htmlspecialchars($course) ?></div>
-    </div>
-    <div class="<?= $badgeClass ?>"><?= $badgeText ?></div>
-  </div>
+<div class="result-header">
+<div>
+<h2 style="margin:0;font-size:18px"><?= $fullname ?></h2>
+<div style="font-size:13px;color:#666">Member ID: <strong><?= $membership_id ?></strong></div>
+</div>
+<div class="badge">Member</div>
+</div>
 
-  <div class="result-field"><strong>Email:</strong> <?= $email ?></div>
-  <div class="result-field"><strong>Phone:</strong> <?= $phone ?></div>
-  <div class="result-field"><strong>Gender:</strong> <?= $gender ?></div>
-  <div class="result-field"><strong>Comments:</strong> <?= $comments ?></div>
 
-  <button id="printBtn" class="print-btn" type="button">Print</button>
+<div class="result-field"><strong>Email:</strong> <?= $email ?></div>
+<div class="result-field"><strong>Phone:</strong> <?= $phone ?></div>
+<div class="result-field"><strong>DOB:</strong> <?= $dob ? $dob : '—' ?></div>
+<div class="result-field"><strong>Address:</strong> <?= $address ? nl2br($address) : '—' ?></div>
+<div class="result-field"><strong>Preferred Genres:</strong> <?= $genres ? $genres : '—' ?></div>
+<div class="result-field"><strong>Membership Start:</strong> <?= $startStr ?></div>
+<div class="result-field"><strong>Membership Expires:</strong> <?= $expiryStr ?></div>
+
+
+<button id="printBtn" class="print-btn" type="button">Print Membership</button>
 </div>
