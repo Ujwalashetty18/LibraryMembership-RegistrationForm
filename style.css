@@ -31,7 +31,7 @@ body{
 /* Main layout */
 .main-wrap{ display:flex; justify-content:center; padding:40px 20px; }
 
-.card{ width:450px; background:var(--card-bg); border-radius:8px; box-shadow: 0 6px 18px rgba(0,0,0,0.08); padding:18px; border:3px solid rgba(19,122,117,0.06); }
+.card{ width:950px; background:var(--card-bg); border-radius:8px; box-shadow: 0 6px 18px rgba(0,0,0,0.08); padding:18px; border:3px solid rgba(19,122,117,0.06); }
 .form-card{ padding:0; overflow:hidden; }
 .card-header{ background:transparent; padding:18px; border-bottom:1px solid #eee; }
 .card-header h2{ margin:0; color:var(--teal-dark); }
@@ -70,3 +70,92 @@ input:focus, select:focus{ outline:none; border-color:var(--teal); box-shadow:0 
   .card-membership{ width:92%; }
   .hero h1{ font-size:24px; }
 }
+
+/* ---------- Make hero + overlapping card match the screenshots ---------- */
+
+/* Hero visuals (large, scrolls with page) */
+.hero {
+  position: relative;                /* scrolls with page */
+  width: 100%;
+  background: linear-gradient(180deg, rgba(19,122,117,0.95), rgba(19,122,117,0.85)) center/cover no-repeat;
+  color: #fff;
+  box-sizing: border-box;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* Visual spacing inside hero — tune these paddings to match screenshot exactly */
+.hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 100px 28px 64px; /* top / sides / bottom — change top if you want taller hero */
+  box-sizing: border-box;
+  text-align: center;
+}
+
+/* small tweak for hero heading size as in screenshot */
+.hero h1 { font-size: 64px; line-height: 1; margin: 0 0 14px; font-weight:800; }
+.hero p  { margin: 0 auto; max-width: 900px; font-size:20px; opacity:0.95; }
+
+/* HOW MUCH THE CARD OVERLAPS the hero — tweak this variable to increase/reduce overlap */
+:root { --card-overlap: 72px; }
+
+/* main-wrap stays in normal flow; no forced large margin-top so hero scrolls away */
+.main-wrap {
+  margin-top: 0;
+  padding: 32px 20px;  /* space below hero */
+  box-sizing: border-box;
+}
+
+/* Card pulled up into hero using negative top margin for the overlapping panel look */
+.card {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;                       /* card width */
+  margin: calc(-1 * var(--card-overlap)) auto 48px; /* negative top margin creates overlap */
+  background: var(--card-bg);
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(12, 35, 32, 0.12);
+  border: 3px solid rgba(19,122,117,0.06);
+  overflow: visible;
+  padding: 0; /* keep inner sections to control inner padding */
+}
+
+/* Card header styling (smooth rounded corners where it overlaps) */
+.card-header {
+  padding: 22px 24px;
+  border-bottom: 1px solid #eee;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+  background: transparent;
+}
+
+/* content sections keep their look */
+.section { padding: 20px 24px; border-bottom: 1px solid #f1f1f1; }
+.section h3{ margin:0 0 12px; }
+
+/* ensure that auto-scroll on focus doesn't hide inputs behind anything */
+input, select, textarea, .section, .card-header, .card-footer {
+  scroll-margin-top: calc(var(--card-overlap) + 24px);
+}
+
+/* keep footer lower, if you have one */
+footer { margin-top: 40px; }
+
+/* responsive: reduce hero text and overlap on small screens */
+@media (max-width: 992px) {
+  .hero-inner { padding: 72px 20px 40px; }
+  .hero h1 { font-size: 36px; }
+  :root { --card-overlap: 48px; }
+  .card { max-width: calc(100% - 40px); margin: calc(-1 * var(--card-overlap)) 20px 36px; }
+  .section { padding: 18px; }
+}
+
+/* small mobile: minimal overlap so keyboard doesn't hide things */
+@media (max-width: 520px) {
+  .hero-inner { padding: 56px 16px 28px; }
+  :root { --card-overlap: 28px; }
+  .card { margin: calc(-1 * var(--card-overlap)) 12px 28px; border-radius: 10px; }
+  .hero h1 { font-size: 24px; }
+}
+
