@@ -1,66 +1,44 @@
-$(function () {
-  function generateMembershipID() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const rand = Math.floor(100 + Math.random() * 900); // 3-digit
-    return `LIB-${year}-${rand}`; // e.g. LIB-2025-523
+$(function(){
+  function setError(elem,msg){
+    elem.addClass('input-error');
+    $('[data-for="'+elem.attr('id')+'"]').text(msg || 'Required');
+  }
+  function clearError(elem){
+    elem.removeClass('input-error');
+    $('[data-for="'+elem.attr('id')+'"]').text('');
   }
 
-  // set initial membership id
-  $("#membership_id").val(generateMembershipID());
+  // basic validation on submit
+  $('#regForm').on('submit', function(e){
+    var valid = true;
+    // validate required inputs
+    $('#regForm [required]').each(function(){
+      var $this = $(this);
+      if(!$this.val() || $this.val().trim()===''){
+        setError($this,'This field is required');
+        valid = false;
+      } else {
+        // field-specific checks
+        if($this.attr('type')==='email'){
+          var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\\.,;:\s@\"]+\.)+[^<>()[\]\\.,;:\s@\"]{2,})$/i;
+          if(!re.test($this.val())){ setError($this,'Invalid email address'); valid = false; } else clearError($this);
+        } else if($this.attr('id')==='phone'){
+          // digits only check (allow + and spaces)
+          var phoneDigits = $this.val().replace(/[^0-9]/g,'').length;
+          if(phoneDigits < 7){ setError($this,'Enter a valid phone number'); valid = false; } else clearError($this);
+        } else {
+          clearError($this);
+        }
+      }
+    });
 
-  // regenerate ID on reset
-  $("#resetBtn").on("click", function () {
-    setTimeout(() => {
-      $("#membership_id").val(generateMembershipID());
-    }, 10);
+    if(!valid){ e.preventDefault(); return false; }
+    // allow submit - show small waiting message
+    $('#submitBtn').text('Registering...').attr('disabled',true);
   });
 
-  $("#memberForm").on("submit", function (e) {
-    e.preventDefault();
-    const $btn = $("#submitBtn");
-    $btn.prop("disabled", true).text("Registering...");
-
-    // simple client-side validation
-    const name = $("#fullname").val().trim();
-    const email = $("#email").val().trim();
-    if (name.length < 2) {
-      alert("Please enter a valid name");
-      $btn.prop("disabled", false).text("Register");
-      return;
-    }
-    if (email.length < 5 || !email.includes("@")) {
-      alert("Please enter a valid email");
-      $btn.prop("disabled", false).text("Register");
-      return;
-    }
-
-    const data = $(this).serialize();
-
-    $.ajax({
-      url: "submit.php",
-      method: "POST",
-      data: data,
-      dataType: "html",
-      success: function (html) {
-        $("#resultArea").html(html).removeClass("hidden");
-        $("#printBtn").on("click", function () {
-          window.print();
-        });
-        $btn.prop("disabled", false).text("Register");
-        // regenerate membership id for next registration
-        $("#membership_id").val(generateMembershipID());
-        // scroll to result
-        $("html,body").animate(
-          { scrollTop: $("#resultArea").offset().top - 20 },
-          400
-        );
-      },
-      error: function (xhr) {
-        alert("Submission failed. Check console or server logs.");
-        console.error(xhr);
-        $btn.prop("disabled", false).text("Register");
-      },
-    });
+  // clear error on input
+  $('#regForm input, #regForm select').on('input change', function(){
+    clearError($(this));
   });
 });

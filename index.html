@@ -1,79 +1,97 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Library Membership Registration</title>
-<link rel="stylesheet" href="style.css" />
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<link rel="stylesheet" href="style.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- html2canvas for card download (fallback to print if offline) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="script.js" defer></script>
 </head>
 <body>
-<main class="container">
-<h1>Library Membership Registration</h1>
-<p class="lead">Join the library to borrow books. Fill the form below and get your membership ID instantly.</p>
+  <header class="hero">
+    <div class="hero-inner">
+      <h1>Welcome to Our Library</h1>
+      <p>Begin your journey with thousands of books, resources, and a vibrant community</p>
+    </div>
+  </header>
 
+  <main class="main-wrap">
+    <form id="regForm" class="card form-card" action="display.php" method="post" novalidate>
+      <div class="card-header">
+        <h2>Library Membership</h2>
+        <small>Join our community of readers and learners</small>
+      </div>
 
-<form id="memberForm" autocomplete="off">
-<div class="row">
-<label for="fullname">Full name</label>
-<input id="fullname" name="fullname" type="text" required />
-</div>
+      <section class="section">
+        <h3>Personal Information</h3>
+        <div class="row">
+          <div class="col">
+            <label for="first">First Name *</label>
+            <input id="first" name="first" type="text" required>
+            <div class="err" data-for="first"></div>
+          </div>
+          <div class="col">
+            <label for="last">Last Name *</label>
+            <input id="last" name="last" type="text" required>
+            <div class="err" data-for="last"></div>
+          </div>
+        </div>
 
+        <label for="dob">Date of Birth *</label>
+        <input id="dob" name="dob" type="date" required>
+        <div class="err" data-for="dob"></div>
+      </section>
 
-<div class="row two-cols">
-<div>
-<label for="email">Email</label>
-<input id="email" name="email" type="email" required />
-</div>
-<div>
-<label for="phone">Phone</label>
-<input id="phone" name="phone" type="tel" pattern="[0-9+ \-]{6,20}" required />
-</div>
-</div>
+      <section class="section">
+        <h3>Contact Information</h3>
+        <label for="email">Email Address *</label>
+        <input id="email" name="email" type="email" required>
+        <div class="err" data-for="email"></div>
 
+        <label for="phone">Phone Number *</label>
+        <input id="phone" name="phone" type="tel" placeholder="+1 (555) 123-4567" required>
+        <div class="err" data-for="phone"></div>
+      </section>
 
-<div class="row">
-<label for="dob">Date of Birth</label>
-<input id="dob" name="dob" type="date" />
-</div>
+      <section class="section">
+        <h3>Address</h3>
+        <label for="street">Street Address *</label>
+        <input id="street" name="street" type="text" required>
+        <div class="err" data-for="street"></div>
 
+        <div class="row">
+          <div class="col">
+            <label for="city">City *</label>
+            <input id="city" name="city" type="text" required>
+            <div class="err" data-for="city"></div>
+          </div>
+          <div class="col">
+            <label for="zip">Zip Code *</label>
+            <input id="zip" name="zip" type="text" required>
+            <div class="err" data-for="zip"></div>
+          </div>
+        </div>
+      </section>
 
-<div class="row">
-<label for="address">Address</label>
-<textarea id="address" name="address" rows="3"></textarea>
-</div>
+      <section class="section">
+        <h3>Membership Type</h3>
+        <label for="membership">Select Membership *</label>
+        <select id="membership" name="membership" required>
+          <option value="">Choose a membership plan</option>
+          <option value="Standard">Standard</option>
+          <option value="Premium">Premium</option>
+          <option value="Student">Student</option>
+        </select>
+        <div class="err" data-for="membership"></div>
+      </section>
 
-
-<div class="row two-cols">
-<div>
-<label for="membership_duration">Membership Duration</label>
-<select id="membership_duration" name="membership_duration">
-<option value="3">3 months</option>
-<option value="6">6 months</option>
-<option value="12" selected>12 months</option>
-</select>
-</div>
-<div>
-<label for="preferred_genres">Preferred genres (optional)</label>
-<input id="preferred_genres" name="preferred_genres" placeholder="e.g. Fiction, Science" />
-</div>
-</div>
-
-
-<input type="hidden" id="membership_id" name="membership_id" />
-
-
-<div class="actions">
-<button type="submit" id="submitBtn">Register</button>
-<button type="reset" id="resetBtn">Reset</button>
-</div>
-</form>
-
-
-<section id="resultArea" class="hidden" aria-live="polite"></section>
-</main>
-
-
-<script src="script.js"></script>
+      <div class="card-footer">
+        <button type="submit" id="submitBtn" class="btn primary">Complete Registration</button>
+      </div>
+    </form>
+  </main>
 </body>
 </html>
